@@ -1,0 +1,10 @@
+/data/
+
+/checkpoints/comparison/
+/model_cam/
+/pred_plot_models/
+/averages.csv
+/params.csv
+/params.xlsx
+/params plot.py
+/barplot.py
