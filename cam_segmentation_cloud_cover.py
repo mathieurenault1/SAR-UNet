@@ -101,7 +101,7 @@ if __name__ == '__main__':
                "resume_from_checkpoint": None
                }
     model = models.SAR_UNet_cloud(hparams=hparams)
-    model_folder = "model_cam/cloud_cover"
+    model_folder = "checkpoints/cam/cloud_cover"
     data_file = 'data/cloud cover dataset'
     device = 'cpu'
     model = load_model(model, model_folder, device)

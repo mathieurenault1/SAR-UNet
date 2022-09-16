@@ -54,7 +54,7 @@ def predict(model, device):
 
 if __name__ == '__main__':
     model = models.SAR_UNet_precip
-    model_folder = "pred_plot_models"
+    model_folder = "checkpoints/plot/precip"
     data_file = 'data/precipitation/train_test_2016-2019_input-length_12_img-ahead_6_rain-threshold_50.h5'
     device = 'cpu'
     model = load_model(model,model_folder,device)

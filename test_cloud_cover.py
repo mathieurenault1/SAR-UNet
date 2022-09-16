@@ -148,7 +148,7 @@ def get_all_metrics(model_folder, data_file,  loss="mse"):
 if __name__ == '__main__':
     loss = "mse"
     # Models that are compared should be in this folder (the ones with the lowest validation error)
-    model_folder = "checkpoints/comparison/cloud cover"
+    model_folder = "checkpoints/eval/cloud cover"
     data_file = 'data/cloud cover dataset'
 
     # This changes whether to load or to run the model loss calculation

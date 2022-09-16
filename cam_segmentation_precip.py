@@ -136,7 +136,7 @@ if __name__ == '__main__':
         "resume_from_checkpoint": None # f"{args.model}/ResSmaAt_UNet2_rain_threshold_50_epoch=56-val_loss=0.300085.ckpt"
     }
     model = models.SAR_UNet_precip(hparams=hparams)
-    model_folder = "model_cam"
+    model_folder = "checkpoints/cam/precip"
     data_file = 'data/precipitation/train_test_2016-2019_input-length_12_img-ahead_6_rain-threshold_50.h5'
     device = 'cpu'
     model = load_model(model,model_folder,device)

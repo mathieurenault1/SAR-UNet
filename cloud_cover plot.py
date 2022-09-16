@@ -55,7 +55,7 @@ def predict(model, device):
 
 if __name__ == '__main__':
     model = models.SAR_UNet_cloud
-    model_folder = "cloud_plot_models"
+    model_folder = "checkpoints/plot/cloud_cover"
     data_file = 'data/cloud cover dataset'
     device = 'cpu'
     model = load_model(model,model_folder,device)
