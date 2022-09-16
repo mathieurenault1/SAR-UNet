@@ -1,10 +1,9 @@
 import torch
 from torch import nn
-import matplotlib.pyplot as plt
 import numpy as np
 import os
 import pickle
-from tqdm import tqdm
+import tqdm
 from utils import dataset_precip
 from models import models
 
@@ -151,7 +150,7 @@ if __name__ == '__main__':
     in_channels = 12
     # Models that are compared should be in this folder (the ones with the lowest validation error)
     model_folder = "checkpoints/eval/precip"
-    data_file = 'data/precipitation/train_test_2016-2019_input-length_12_img-ahead_6_rain-threshold_50.h5'
+    data_file = 'data/precip/train_test_2016-2019_input-length_12_img-ahead_6_rain-threshold_50.h5'
 
     # This changes whether to load or to run the model loss calculation
     load = False
