@@ -54,7 +54,7 @@ def train_regression(hparams):
     trainer.fit(net)
 
 if __name__ == "__main__":
-    args = {
+    hparams = {
         'model': 'SAR_UNet_precip',
         'out_channels': 1,
         'in_channels': 12, # or 6 or 18 for more or less input data
@@ -70,4 +70,4 @@ if __name__ == "__main__":
         #change input-length and img-ahead accordingly
         "resume_from_checkpoint": None # f"{args.model}/ResSmaAt_UNet2_rain_threshold_50_epoch=56-val_loss=0.300085.ckpt"
     }
-    train_regression(hparams=args)
+    train_regression(hparams=hparams)

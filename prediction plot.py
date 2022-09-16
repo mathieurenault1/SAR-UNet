@@ -43,7 +43,7 @@ def predict(model, device):
     for x, y_true in tqdm(test_dl, leave=False):
         x = x.to(torch.device(device))
         output = model(x)
-        fig, axes = plt.subplots(1, 1, figsize=(25, 25))
+        fig, axes = plt.subplots(3, 1, figsize=(25, 25))
         axes[0].imshow(x[0][0].detach().cpu().numpy())
         axes[1].imshow(y_true[0].cpu().numpy())
         axes[2].imshow((output[0][0]).detach().cpu().numpy())

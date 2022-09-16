@@ -148,7 +148,6 @@ def get_all_metrics(model_folder, data_file, denormalize=True, in_channels=12):
 
 if __name__ == '__main__':
     denormalize = True
-    in_channels = 12
     # Models that are compared should be in this folder (the ones with the lowest validation error)
     model_folder = "checkpoints/comparison/precipitation"
     data_file = 'data/precipitation/train_test_2016-2019_input-length_12_img-ahead_6_rain-threshold_50.h5'
@@ -161,7 +160,7 @@ if __name__ == '__main__':
             test_metrics = pickle.load(f)
 
     else:
-        test_metrics = get_all_metrics(model_folder, data_file, denormalize, in_channels)
+        test_metrics = get_all_metrics(model_folder, data_file, denormalize, hparams['in_channels'])
         # Save losses
         with open(model_folder + f"/model_losses_{f'de' if denormalize else ''}normalized.pkl",
                   "wb") as f:
