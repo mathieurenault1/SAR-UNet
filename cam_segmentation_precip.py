@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import warnings
 from pytorch_grad_cam.utils.image import show_cam_on_image
 from pytorch_grad_cam import GradCAM
+
 warnings.filterwarnings('ignore')
 warnings.simplefilter('ignore')
 
@@ -32,6 +33,7 @@ def load_model(model, model_folder, device):
     model.to(torch.device(device))
     return model
 
+
 def get_segmentation_data(in_channels):
     dataset = dataset_precip.precipitation_maps_oversampled_h5(
         folder=data_file,
@@ -47,24 +49,22 @@ def get_segmentation_data(in_channels):
     )
     return test_dl
 
-def run_cam(model, target_layers, device):
-    test_dl = get_segmentation_data()
+
+def run_cam(model, target_layers, device, in_channels):
+    test_dl = get_segmentation_data(in_channels)
     for x, y_true in tqdm(test_dl, leave=False):
         x = x.to(torch.device(device))
         output = model(x)
-        mask = np.digitize((output[0][0]*47.83*12).detach().cpu().numpy(), np.array([1.5]), right=True)
+        mask = np.digitize((output[0][0] * 47.83 * 12).detach().cpu().numpy(), np.array([1.5]), right=True)
         mask_float = np.float32(mask)
-
-        image = torch.stack([x[0][0], x[0][0], x[0][0]],dim=2)
+        image = torch.stack([x[0][0], x[0][0], x[0][0]], dim=2)
         image = image.cpu().numpy()
-
-        #model.up4.conv.double_conv[3].pointwise
         targets = [SemanticSegmentationTarget(0, mask_float, device)]
         use_cuda = (device == 'cuda')
         cam_image = []
         for layer in target_layers:
-            with GradCAM(model=model,target_layers=layer,use_cuda=use_cuda) as cam:
-                grayscale_cam = cam(input_tensor=x,targets=targets)[0, :]
+            with GradCAM(model=model, target_layers=layer, use_cuda=use_cuda) as cam:
+                grayscale_cam = cam(input_tensor=x, targets=targets)[0, :]
                 cam_image.append(show_cam_on_image(image, grayscale_cam, use_rgb=True))
 
         fig, axes = plt.subplots(2, 3, figsize=(25, 25))
@@ -76,11 +76,11 @@ def run_cam(model, target_layers, device):
         # axes[1].set_title('Prediction', {'fontsize': 16})
 
         axes[0][0].imshow(cam_image[6])
-        #axes[0][0].set_title('Residual DSC Blocks Activations', {'fontsize': 12})
+        # axes[0][0].set_title('Residual DSC Blocks Activations', {'fontsize': 12})
         axes[0][1].imshow(cam_image[7])
-        #axes[0][1].set_title('DSC Path Activation', {'fontsize': 12})
+        # axes[0][1].set_title('DSC Path Activation', {'fontsize': 12})
         axes[0][2].imshow(cam_image[8])
-        #axes[0][2].set_title('Residual Connection Activation', {'fontsize': 12})
+        # axes[0][2].set_title('Residual Connection Activation', {'fontsize': 12})
         # axes[0][3].imshow(cam_image[3])
         # axes[0][3].set_title('CBAM Activation', {'fontsize': 12})
         axes[1][0].imshow(cam_image[9])
@@ -117,12 +117,11 @@ def run_cam(model, target_layers, device):
         plt.show()
 
 
-
 if __name__ == '__main__':
     hparams = {
         'model': 'SAR_UNet_precip',
         'out_channels': 1,
-        'in_channels': 12, # or 6 or 18 for more or less input data
+        'in_channels': 12,  # or 6 or 18 for more or less input data
         "batch_size": 6,
         "learning_rate": 0.001,
         'gpus': -1,
@@ -132,23 +131,24 @@ if __name__ == '__main__':
         "bilinear": True,
         "valid_size": 0.1,
         "dataset_folder": "data/precipitation/train_test_2016-2019_input-length_12_img-ahead_6_rain-threshold_50.h5",
-        #change input-length and img-ahead accordingly
-        "resume_from_checkpoint": None # f"{args.model}/ResSmaAt_UNet2_rain_threshold_50_epoch=56-val_loss=0.300085.ckpt"
+        # change input-length and img-ahead accordingly
+        "resume_from_checkpoint": None
+        # f"{args.model}/ResSmaAt_UNet2_rain_threshold_50_epoch=56-val_loss=0.300085.ckpt"
     }
     model = models.SAR_UNet_precip(hparams=hparams)
     model_folder = "checkpoints/cam/precip"
-    data_file = 'data/precipitation/train_test_2016-2019_input-length_12_img-ahead_6_rain-threshold_50.h5'
+    data_file = 'data/precip/train_test_2016-2019_input-length_12_img-ahead_6_rain-threshold_50.h5'
     device = 'cpu'
-    model = load_model(model,model_folder,device)
+    model = load_model(model, model_folder, device)
     print(model)
-    target_layers = [#[model.RRCNN1],[model.RRCNN1.doubleconv],[model.RRCNN1.Conv_1x1],[model.cbam1],
-                     # [model.RRCNN2],[model.RRCNN2.doubleconv],[model.RRCNN2.Conv_1x1],[model.cbam2],
-                     # [model.RRCNN3],[model.RRCNN3.doubleconv],[model.RRCNN3.Conv_1x1],[model.cbam3],
-                     # [model.RRCNN4],[model.RRCNN4.doubleconv],[model.RRCNN4.Conv_1x1],[model.cbam4],
-                     # [model.RRCNN5],[model.RRCNN5.doubleconv],[model.RRCNN5.Conv_1x1],[model.cbam5],
-                     [model.Up_RRCNN5],[model.Up_RRCNN5.doubleconv],[model.Up_RRCNN5.Conv_1x1],
-                     [model.Up_RRCNN4],[model.Up_RRCNN4.doubleconv],[model.Up_RRCNN4.Conv_1x1],
-                     [model.Up_RRCNN3],[model.Up_RRCNN3.doubleconv],[model.Up_RRCNN3.Conv_1x1],
-                     [model.Up_RRCNN2],[model.Up_RRCNN2.doubleconv],[model.Up_RRCNN2.Conv_1x1],
-                     ]
-    run_cam(model, target_layers, device)
+    target_layers = [  # [model.RRCNN1],[model.RRCNN1.doubleconv],[model.RRCNN1.Conv_1x1],[model.cbam1],
+        # [model.RRCNN2],[model.RRCNN2.doubleconv],[model.RRCNN2.Conv_1x1],[model.cbam2],
+        # [model.RRCNN3],[model.RRCNN3.doubleconv],[model.RRCNN3.Conv_1x1],[model.cbam3],
+        # [model.RRCNN4],[model.RRCNN4.doubleconv],[model.RRCNN4.Conv_1x1],[model.cbam4],
+        # [model.RRCNN5],[model.RRCNN5.doubleconv],[model.RRCNN5.Conv_1x1],[model.cbam5],
+        [model.Up_RRCNN5], [model.Up_RRCNN5.doubleconv], [model.Up_RRCNN5.Conv_1x1],
+        [model.Up_RRCNN4], [model.Up_RRCNN4.doubleconv], [model.Up_RRCNN4.Conv_1x1],
+        [model.Up_RRCNN3], [model.Up_RRCNN3.doubleconv], [model.Up_RRCNN3.Conv_1x1],
+        [model.Up_RRCNN2], [model.Up_RRCNN2.doubleconv], [model.Up_RRCNN2.Conv_1x1],
+    ]
+    run_cam(model, target_layers, device, hparams['in_channels'])

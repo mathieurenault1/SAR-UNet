@@ -28,7 +28,7 @@ class UNet_base(pl.LightningModule):
         return nn.functional.mse_loss(y_pred, y_true, reduction="sum") / y_true.size(0)
 
     def training_step(self, batch, batch_idx):
-        x, y = batch[0].to('cuda'), batch[1].to('cuda')
+        x, y = batch[0].to(self.hparams['device']), batch[1].to(self.hparams['device'])
         y_pred = self(x)
         loss = self.loss_func(y_pred.squeeze(), y)
         return {'loss': loss}
@@ -43,7 +43,7 @@ class UNet_base(pl.LightningModule):
                 "progress_bar": {"train_loss": loss_mean}}
 
     def validation_step(self, batch, batch_idx):
-        x, y = batch[0].to('cuda'), batch[1].to('cuda')
+        x, y = batch[0].to(self.hparams['device']), batch[1].to(self.hparams['device'])
         y_pred = self(x)
         val_loss = self.loss_func(y_pred.squeeze(), y)
         return {"val_loss": val_loss}
@@ -58,7 +58,7 @@ class UNet_base(pl.LightningModule):
                 "progress_bar": {"val_loss": avg_loss}}
 
     def test_step(self, batch, batch_idx):
-        x, y = batch[0].to('cuda'), batch[1].to('cuda')
+        x, y = batch[0].to(self.hparams['device']), batch[1].to(self.hparams['device'])
         y_pred = self(x)
         val_loss = self.loss_func(y_pred.squeeze(), y)
         return {"test_loss": val_loss}

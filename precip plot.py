@@ -1,19 +1,11 @@
-import sys
 from torch.utils.data import DataLoader
-import numpy as np
 import os
 import torch
 from utils import dataset_precip
 from tqdm import tqdm
 from models import models
 import matplotlib.pyplot as plt
-import torch.nn as nn
-from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateLogger, EarlyStopping
 import warnings
-import torch.functional as F
-import requests
-import torchvision
-
 warnings.filterwarnings('ignore')
 warnings.simplefilter('ignore')
 
@@ -55,7 +47,7 @@ def predict(model, device):
 if __name__ == '__main__':
     model = models.SAR_UNet_precip
     model_folder = "checkpoints/plot/precip"
-    data_file = 'data/precipitation/train_test_2016-2019_input-length_12_img-ahead_6_rain-threshold_50.h5'
+    data_file = 'data/precip/train_test_2016-2019_input-length_12_img-ahead_6_rain-threshold_50.h5'
     device = 'cpu'
     model = load_model(model,model_folder,device)
 

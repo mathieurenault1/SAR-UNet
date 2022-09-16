@@ -10,6 +10,7 @@ from models import models
 warnings.filterwarnings('ignore')
 warnings.simplefilter('ignore')
 
+
 def load_model(model, model_folder, device):
     models = [m for m in os.listdir(model_folder) if ".ckpt" in m]
     model_file = models[-1]
@@ -17,6 +18,7 @@ def load_model(model, model_folder, device):
     model.eval()
     model.to(torch.device(device))
     return model
+
 
 def load_data():
     dataset = cloud_cover_dataset.cloud_maps(
@@ -33,6 +35,7 @@ def load_data():
     )
     return test_dl
 
+
 def predict(model, device):
     test_dl = load_data()
     for x, y_true in tqdm(test_dl, leave=False):
@@ -43,21 +46,22 @@ def predict(model, device):
         axes[0][1].imshow(x[0][1].detach().cpu().numpy())
         axes[1][0].imshow(x[0][2].detach().cpu().numpy())
         axes[1][1].imshow(x[0][3].detach().cpu().numpy())
-        #axes[1].imshow(y_true[0][0].cpu().numpy())
-        #axes[2].imshow((output[0][0]).detach().cpu().numpy())
+        # axes[1].imshow(y_true[0][0].cpu().numpy())
+        # axes[2].imshow((output[0][0]).detach().cpu().numpy())
         axes[0][0].set_title('1st input image', {'fontsize': 12})
         axes[0][1].set_title('2nd input image', {'fontsize': 12})
         axes[1][0].set_title('3rd input image', {'fontsize': 12})
         axes[1][1].set_title('4th input image', {'fontsize': 12})
-        #axes[1].set_title('Ground truth (180 minutes)', {'fontsize': 12})
-        #axes[2].set_title('Prediction (180 minutes)', {'fontsize': 12})
+        # axes[1].set_title('Ground truth (180 minutes)', {'fontsize': 12})
+        # axes[2].set_title('Prediction (180 minutes)', {'fontsize': 12})
         plt.show()
+
 
 if __name__ == '__main__':
     model = models.SAR_UNet_cloud
     model_folder = "checkpoints/plot/cloud_cover"
-    data_file = 'data/cloud cover dataset'
+    data_file = 'data/cloud_cover'
     device = 'cpu'
-    model = load_model(model,model_folder,device)
+    model = load_model(model, model_folder, device)
 
     predict(model, device)

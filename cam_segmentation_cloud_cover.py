@@ -59,10 +59,9 @@ def run_cam(model, target_layers, device):
         image = image.cpu().numpy()
 
         targets = [SemanticSegmentationTarget(0, mask_float, device)]
-        use_cuda = (device == 'cuda')
         cam_image = []
         for layer in target_layers:
-            with GradCAM(model=model,target_layers=layer,use_cuda=use_cuda) as cam:
+            with GradCAM(model=model,target_layers=layer,use_cuda=False) as cam:
                 grayscale_cam = cam(input_tensor=x,targets=targets)[0, :]
                 cam_image.append(show_cam_on_image(image, grayscale_cam, use_rgb=True))
 
@@ -97,12 +96,12 @@ if __name__ == '__main__':
                "use_oversampled_dataset": True,
                "bilinear": True,
                "valid_size": 0.1,
-               "dataset_folder": "data/cloud cover dataset",
+               "dataset_folder": "data/cloud_cover",
                "resume_from_checkpoint": None
                }
     model = models.SAR_UNet_cloud(hparams=hparams)
     model_folder = "checkpoints/cam/cloud_cover"
-    data_file = 'data/cloud cover dataset'
+    data_file = 'data/cloud_cover'
     device = 'cpu'
     model = load_model(model, model_folder, device)
     print(model)

@@ -3,7 +3,7 @@ from torch import nn
 import numpy as np
 import os
 import pickle
-import tqdm
+from tqdm import tqdm
 from utils import dataset_precip
 from models import models
 
@@ -25,7 +25,7 @@ def get_model_class(model_file):
 
 def compute_model_metrics(model, test_dl, denormalize=True):
     model.eval()  # or model.freeze()?
-    model.to("cuda")
+    model.to(device)
     loss_func = nn.functional.mse_loss
     factor = 1
     if denormalize:
@@ -38,8 +38,8 @@ def compute_model_metrics(model, test_dl, denormalize=True):
         total_fn = 0
         loss_model = 0.0
         for x, y_true in tqdm(test_dl, leave=False):
-            x = x.to("cuda")
-            y_true = y_true.to("cuda")
+            x = x.to(device)
+            y_true = y_true.to(device)
             y_pred = model(x)
             loss_model += loss_func(y_pred.squeeze() * factor, y_true * factor) / y_true.size(0)
             # denormalize and convert from mm/5min to mm/h
@@ -146,6 +146,7 @@ def get_all_metrics(model_folder, data_file, denormalize=True, in_channels=12):
     return test_metrics
 
 if __name__ == '__main__':
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     denormalize = True
     in_channels = 12
     # Models that are compared should be in this folder (the ones with the lowest validation error)

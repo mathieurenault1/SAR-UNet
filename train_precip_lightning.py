@@ -1,4 +1,3 @@
-import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateLogger, EarlyStopping
 from pytorch_lightning import loggers
 import torch
@@ -6,7 +5,7 @@ from models import models
 import pytorch_lightning as pl
 import torchsummary
 import os
-import numpy as np
+
 
 def train_regression(hparams):
     if hparams['model'] == "SAR_UNet_precip":
@@ -18,10 +17,8 @@ def train_regression(hparams):
     else:
         raise NotImplementedError(f"Model '{hparams['model']}' not implemented")
 
-    #torchsummary.summary(net, (hparams['in_channels'], 288, 288), device="cpu")
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     net = net.to(device)
-
+    torchsummary.summary(net, (hparams['in_channels'], 288, 288), device="cpu")
 
     default_root_dir = ""
 
@@ -41,7 +38,7 @@ def train_regression(hparams):
                                            patience=hparams['es_patience'],
                                            # is effectively half (due to a bug in pytorch-lightning)
                                            )
-    trainer = pl.Trainer(gpus=-1,
+    trainer = pl.Trainer(gpus=(-1 if device=='cuda:0' else 0),
                          weights_summary=None,
                          max_epochs=200,
                          default_root_dir=default_root_dir,
@@ -53,21 +50,25 @@ def train_regression(hparams):
                          )
     trainer.fit(net)
 
+
 if __name__ == "__main__":
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     hparams = {
+        'device': device,
         'model': 'SAR_UNet_precip',
         'out_channels': 1,
-        'in_channels': 12, # or 6 or 18 for more or less input data
+        'in_channels': 12,  # or 6 or 18 for more or less input data
         "batch_size": 6,
         "learning_rate": 0.001,
-        'gpus': -1,
+        'gpus': (-1 if device=='cuda:0' else 0),
         "lr_patience": 4,
         "es_patience": 30,
         "use_oversampled_dataset": True,
         "bilinear": True,
         "valid_size": 0.1,
-        "dataset_folder": "data/precipitation/train_test_2016-2019_input-length_12_img-ahead_6_rain-threshold_50.h5",
-        #change input-length and img-ahead accordingly
-        "resume_from_checkpoint": None # f"{args.model}/ResSmaAt_UNet2_rain_threshold_50_epoch=56-val_loss=0.300085.ckpt"
+        "dataset_folder": "data/precip/train_test_2016-2019_input-length_12_img-ahead_6_rain-threshold_50.h5",
+        # change input-length and img-ahead accordingly
+        "resume_from_checkpoint": None
+        # f"{args.model}/ResSmaAt_UNet2_rain_threshold_50_epoch=56-val_loss=0.300085.ckpt"
     }
     train_regression(hparams=hparams)

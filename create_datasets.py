@@ -4,7 +4,7 @@ from tqdm import tqdm
 
 
 def create_dataset(input_length, image_ahead, rain_amount_thresh):
-    with h5py.File("data/precipitation/RAD_NL25_RAC_5min_train_test_2016-2019.h5", "r", rdcc_nbytes=1024 ** 3) as orig_f:
+    with h5py.File("data/precip/RAD_NL25_RAC_5min_train_test_2016-2019.h5", "r", rdcc_nbytes=1024 ** 3) as orig_f:
         train_images = orig_f["train"]["images"]
         train_timestamps = orig_f["train"]["timestamps"]
         test_images = orig_f["test"]["images"]
@@ -14,7 +14,7 @@ def create_dataset(input_length, image_ahead, rain_amount_thresh):
         imgSize = train_images.shape[1]
         num_pixels = imgSize * imgSize
 
-        filename = f"data/precipitation/train_test_2016-2019_input-length_{input_length}_img-ahead_{image_ahead}_rain-threshold_{int(rain_amount_thresh * 100)}.h5"
+        filename = f"data/precip/train_test_2016-2019_input-length_{input_length}_img-ahead_{image_ahead}_rain-threshold_{int(rain_amount_thresh * 100)}.h5"
         with h5py.File(filename, "w", rdcc_nbytes=1024 ** 3) as f:
             train_set = f.create_group("train")
             test_set = f.create_group("test")

@@ -1,4 +1,3 @@
-import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateLogger, EarlyStopping
 from pytorch_lightning import loggers
 import torch
@@ -6,7 +5,6 @@ from models import models
 import pytorch_lightning as pl
 import torchsummary
 import os
-import numpy as np
 
 def train_cloud_cover(hparams):
     if hparams['model'] == "SAR_UNet_cloud":
@@ -17,7 +15,6 @@ def train_cloud_cover(hparams):
         raise NotImplementedError(f"Model '{hparams['model']}' not implemented")
 
     torchsummary.summary(net, (hparams['in_channels'], 256, 256), device="cpu")
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     net = net.to(device)
     default_root_dir = ""
 
@@ -37,7 +34,7 @@ def train_cloud_cover(hparams):
                                            patience=hparams['es_patience'],
                                            # is effectively half (due to a bug in pytorch-lightning)
                                            )
-    trainer = pl.Trainer(gpus=-1,
+    trainer = pl.Trainer(gpus=(-1 if device=='cuda:0' else 0),
                          weights_summary=None,
                          max_epochs=200,
                          default_root_dir=default_root_dir,
@@ -50,22 +47,24 @@ def train_cloud_cover(hparams):
     trainer.fit(net)
 
 if __name__ == "__main__":
-    args = {
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    hparams = {
+        'device':device,
         'model': 'SAR_UNet_cloud',
         'out_channels': 6,
         'in_channels': 4,
         "batch_size": 6,
         "learning_rate": 0.001,
-        'gpus': -1,
+        'gpus': (-1 if device=='cuda:0' else 0),
         "lr_patience": 4,
         "es_patience": 30,
         "use_oversampled_dataset": True,
         "bilinear": True,
         "valid_size": 0.1,
-        "dataset_folder": "data/cloud cover dataset",
+        "dataset_folder": "data/cloud_cover",
         "resume_from_checkpoint": None #f"{args.model}/ResSmaAt_UNet2_rain_threshold_50_epoch=56-val_loss=0.300085.ckpt"
 }
-    train_cloud_cover(hparams=args)
+    train_cloud_cover(hparams=hparams)
 
 
 

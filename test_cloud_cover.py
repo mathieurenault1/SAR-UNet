@@ -24,7 +24,7 @@ def get_model_class(model_file):
 
 def compute_model_metrics(model, test_dl, loss="mse"):
     model.eval()  # or model.freeze()?
-    model.to("cuda")
+    model.to(device)
     if loss.lower() == "mse":
         loss_func = nn.functional.mse_loss
     elif loss.lower() == "mae":
@@ -37,8 +37,8 @@ def compute_model_metrics(model, test_dl, loss="mse"):
         total_fn = 0
         loss_model = 0.0
         for x, y_true in tqdm(test_dl, leave=False):
-            x = x.to("cuda")
-            y_true = y_true.to("cuda")
+            x = x.to(device)
+            y_true = y_true.to(device)
             y_pred = model(x)
             loss_model += loss_func(y_pred.squeeze(), y_true)
             # denormalize and convert from mm/5min to mm/h
@@ -146,16 +146,17 @@ def get_all_metrics(model_folder, data_file,  loss="mse"):
     return test_metrics
 
 if __name__ == '__main__':
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     loss = "mse"
     # Models that are compared should be in this folder (the ones with the lowest validation error)
-    model_folder = "checkpoints/eval/cloud cover"
-    data_file = 'data/cloud cover dataset'
+    model_folder = "checkpoints/eval/cloud_cover"
+    data_file = 'data/cloud_cover'
 
     # This changes whether to load or to run the model loss calculation
     load = False
     if load:
         # load the losses
-        with open(f"checkpoints/comparison/cloud cover/model_losses_{loss.upper()}.pkl", "rb") as f:
+        with open(f"checkpoints/eval/cloud_cover/model_losses_{loss.upper()}.pkl", "rb") as f:
             test_metrics = pickle.load(f)
 
     else:
