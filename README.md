@@ -6,4 +6,4 @@ Code for the Paper "SAR-UNet: Small Attention Residual UNet for Explainable Prec
 # Datasets & Models
 If you want access to the datasets (precipitation maps & cloud cover dataset) used in this paper，please visit SmaAt-UNet for further details.
 
-Please put the dataset into "\data\precip" directory for training and testing the precipitation network, and put the pre-trained models into "\results\Model_Saved" directory for future loading.
+Please put the dataset into "\data\precip" directory for training and testing the precipitation network, and put the trained models into "\checkpoints\eval\precip" directory for future loading.
