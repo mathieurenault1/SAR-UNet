@@ -12,10 +12,11 @@ For training on the precipitation task we used the train_precip_lightning.py fil
 For training on the cloud cover task we used the train_cloud_cover.py file.
 Training was done using Pytorch-Lightning. All details about parameters used and device configurations can be found in the paper.
 
-![](https://user-images.githubusercontent.com/73837432/193831820-45c9d043-6d4d-4843-88de-171431fcb0f8.png)
+![prediction example2](https://user-images.githubusercontent.com/73837432/193834072-aa05eb3d-14a5-4c17-bc12-1b51daac7e06.jpg)
 
 # Explainability
 The XAI plots can be obtained by running the cam_segmentation_precip.py and cam_segmentation_cloud_cover.py scripts. The code used was obtained at https://github.com/jacobgil/pytorch-grad-cam and adapted to our dataset and model.
+![explanations](https://user-images.githubusercontent.com/73837432/193834255-37c54c38-69ae-47b1-9ebd-588dd4b476ad.jpg)
+![cloud cover expl (1)](https://user-images.githubusercontent.com/73837432/193833856-1f882654-3696-47f8-bfae-1632fd51cade.jpg)
 
-![explanations](https://user-images.githubusercontent.com/73837432/193831432-ae138443-fa59-4c71-a00f-6c30b0d28d0a.png)
-![cloud cover expl](https://user-images.githubusercontent.com/73837432/193831465-c49e4316-272f-4627-a559-d9ee3ae7fe1b.png)
+
