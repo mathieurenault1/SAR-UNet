@@ -1,5 +1,6 @@
 # SAR-UNet
-Code for the Paper "SAR-UNet: Small Attention Residual UNet for Explainable Precipitation Nowcasting" [(ArXiv link)](https://arxiv.org/abs/2303.06663)
+Code for the Paper "SAR-UNet: Small Attention Residual UNet for Explainable Precipitation Nowcasting". [(ArXiv link)](https://arxiv.org/abs/2303.06663)
+Accepted for publication at the [International Joint Conference on Neural Networks (IJCNN 2023)](https://2023.ijcnn.org/)
 
 ![sar unet](https://user-images.githubusercontent.com/73837432/193812363-4e9a817d-fd9e-47de-a621-e32766258d0a.png)
 
