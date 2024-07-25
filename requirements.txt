@@ -49,4 +49,4 @@ ttach==0.0.3
 typing_extensions==4.3.0
 urllib3==1.26.12
 Werkzeug==3.0.3
-zipp==3.8.1
+zipp==3.19.1
