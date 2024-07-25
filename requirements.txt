@@ -1,6 +1,6 @@
 absl-py==1.2.0
 cachetools==5.2.0
-certifi==2022.9.14
+certifi==2024.7.4
 charset-normalizer==2.1.1
 colorama==0.4.5
 contourpy==1.0.5
