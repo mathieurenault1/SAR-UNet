@@ -5,7 +5,7 @@ charset-normalizer==2.1.1
 colorama==0.4.5
 contourpy==1.0.5
 cycler==0.11.0
-fonttools==4.37.2
+fonttools==4.43.0
 future==0.18.3
 google-auth==2.11.0
 google-auth-oauthlib==0.4.6
